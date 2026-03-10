@@ -181,7 +181,7 @@ A new `.commands()` method has been added with multiple overloads:
 
 ## Events
 
-Event registration uses the new KubeJS 6 syntax:
+Events now use a dedicated `SummoningRituals` handler:
 
 **Before:**
 ```js
@@ -191,15 +191,16 @@ onEvent('summoningrituals.complete', event => { ... })
 
 **After:**
 ```js
-ServerEvents.generic("summoningrituals.start", event => { ... })
-ServerEvents.generic("summoningrituals.complete", event => { ... })
+SummoningRituals.start(event => { ... })
+SummoningRituals.complete(event => { ... })
 ```
 
 ## Quick Reference
 
 | Feature | 1.19/1.20 | 1.21.1 |
 |---|---|---|
-| Event registration | `onEvent('recipes', ...)` | `ServerEvents.recipes(...)` |
+| Recipe events | `onEvent('recipes', ...)` | `ServerEvents.recipes(...)` |
+| Ritual events | `onEvent('summoningrituals.start', ...)` | `SummoningRituals.start(...)` |
 | Item inputs | `.input(item)` (chained) | `.itemInputs([...])` (array) |
 | Item outputs | `.itemOutput(item)` (chained) | `.itemOutputs([...])` (array) |
 | Mob outputs | `.mobOutput(mob)` (chained) | `.entityOutputs([...])` (array) |
@@ -211,3 +212,4 @@ ServerEvents.generic("summoningrituals.complete", event => { ... })
 | Block below | `.blockBelow(block, state)` | ❌ Not yet implemented |
 | Commands | N/A | `.commands([...])` |
 | Tags | `#forge:` | `#c:` |
+| Event recipe prop | `event.recipe` | `event.recipeInfo` |
