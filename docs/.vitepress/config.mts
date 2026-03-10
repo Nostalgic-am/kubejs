@@ -3,17 +3,11 @@ import { defineConfig } from "vitepress";
 const BASE = "/kubejs/";
 
 export default defineConfig({
-  title: "KubeJS",
-  description: "Documentation for KubeJS",
+  title: "Summoning Rituals",
+  description: "KubeJS Wiki for the Summoning Rituals Minecraft mod",
   base: BASE,
 
-  head: [
-    // Uncomment and replace with your favicon path if you have one
-    // ['link', { rel: 'icon', href: `${BASE}favicon.ico` }],
-  ],
-
   themeConfig: {
-    // Top navigation bar
     nav: [
       { text: "Home", link: "/" },
       { text: "Guide", link: "/getting-started" },
@@ -21,52 +15,74 @@ export default defineConfig({
         text: "Links",
         items: [
           {
-            text: "GitHub",
-            link: "https://github.com/Nostalgic-am/kubejs",
+            text: "GitHub (Mod)",
+            link: "https://github.com/AlmostReliable/summoningrituals",
+          },
+          {
+            text: "CurseForge",
+            link: "https://www.curseforge.com/minecraft/mc-mods/summoningrituals",
+          },
+          {
+            text: "Modrinth",
+            link: "https://modrinth.com/mod/summoningrituals",
           },
         ],
       },
     ],
 
-    // Sidebar navigation
     sidebar: [
       {
-        text: "Intro",
+        text: "Introduction",
         items: [
-          { text: "Introduction", link: "/" },
+          { text: "Home", link: "/" },
           { text: "Getting Started", link: "/getting-started" },
         ],
       },
       {
-        text: "Guide",
+        text: "Recipes",
         items: [
-          { text: "Configuration", link: "/configuration" },
-          { text: "Example", link: "/example" },
+          { text: "Altar Recipe", link: "/recipes/altar" },
+          { text: "Item Inputs & Outputs", link: "/recipes/items" },
+          { text: "Entity Inputs & Outputs", link: "/recipes/entities" },
+          { text: "Commands", link: "/recipes/commands" },
         ],
+      },
+      {
+        text: "Conditions",
+        items: [
+          { text: "Overview", link: "/conditions/overview" },
+          { text: "Biome & Dimension", link: "/conditions/biome-dimension" },
+          { text: "Time & Weather", link: "/conditions/time-weather" },
+          { text: "Height, Sky & Structures", link: "/conditions/environment" },
+        ],
+      },
+      {
+        text: "Events",
+        items: [{ text: "Ritual Events", link: "/events" }],
+      },
+      {
+        text: "Reference",
+        items: [{ text: "Full Example", link: "/example" }],
       },
     ],
 
-    // Show "Edit this page" link (update with your repo)
     editLink: {
-      pattern:
-        "https://github.com/Nostalgic-am/kubejs/edit/main/docs/:path",
+      pattern: "https://github.com/Nostalgic-am/kubejs/edit/main/docs/:path",
       text: "Edit this page",
     },
 
-    // Enable search
     search: {
       provider: "local",
     },
 
-    // Social links in the nav bar
     socialLinks: [
       { icon: "github", link: "https://github.com/Nostalgic-am/kubejs" },
     ],
 
-    // Footer
     footer: {
-      message: "Released under the MIT License.",
-      copyright: "Copyright © 2026 Nostalgic-am",
+      message:
+        'Summoning Rituals by <a href="https://github.com/AlmostReliable">AlmostReliable</a>',
+      copyright: "Wiki maintained by Nostalgic-am",
     },
 
     lastUpdated: {
@@ -74,6 +90,5 @@ export default defineConfig({
     },
   },
 
-  // Enable last updated timestamps
   lastUpdated: true,
 });

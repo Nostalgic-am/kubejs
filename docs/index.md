@@ -2,22 +2,27 @@
 layout: home
 
 hero:
-  name: "KubeJS"
-  text: "Documentation"
-  tagline: A brief description of what your project does.
+  name: "Summoning Rituals"
+  text: "KubeJS Wiki"
+  tagline: Create custom summoning rituals for items, mobs, and commands.
   actions:
     - theme: brand
       text: Get Started
       link: /getting-started
     - theme: alt
-      text: View on GitHub
-      link: https://github.com/Nostalgic-am/kubejs
+      text: Full Example
+      link: /example
+    - theme: alt
+      text: GitHub
+      link: https://github.com/AlmostReliable/summoningrituals
 
 features:
-  - title: 🚀 Feature One
-    details: Describe your first major feature here. Keep it concise and compelling.
-  - title: ⚙️ Feature Two
-    details: Describe your second major feature here. Highlight what makes it useful.
-  - title: 📦 Feature Three
-    details: Describe your third major feature here. Show the value it provides.
+  - title: 🛠️ Recipe Builder
+    details: Fluent API for creating altar recipes with item/entity inputs, outputs, commands, and conditions.
+  - title: 🐾 Entity Support
+    details: Summon and sacrifice entities with custom NBT data, tooltips, spawn offsets, and spread control.
+  - title: ⚡ Events
+    details: Hook into ritual start and completion events to add custom logic, effects, and player interactions.
+  - title: 🌦️ Conditions
+    details: Restrict rituals by biome, dimension, time, weather, height, structures, and open sky.
 ---
