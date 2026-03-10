@@ -16,17 +16,42 @@ event.recipes.summoningrituals
     )
 ```
 
-## Available Conditions
+## All Available Conditions
+
+These are **all** conditions available in the 1.21.1 `ConditionsBuilder`, confirmed from [source code](https://github.com/AlmostReliable/summoningrituals/blob/1.21.1/src/main/java/com/almostreliable/summoningrituals/compat/kubejs/builder/ConditionsBuilder.java):
+
+### Location Conditions
 
 | Method | Description | Page |
 |---|---|---|
-| `.biomes([...])` | Require specific biomes | [Biome & Dimension](/conditions/biome-dimension) |
+| `.biomes(biomes)` | Require specific biomes | [Biome & Dimension](/conditions/biome-dimension) |
 | `.dimension(id)` | Require a specific dimension | [Biome & Dimension](/conditions/biome-dimension) |
-| `.time(time)` | Require day or night | [Time & Weather](/conditions/time-weather) |
-| `.weather(callback)` | Require weather state | [Time & Weather](/conditions/time-weather) |
-| `.maxHeight(y)` | Require altar below a Y level | [Height, Sky & Structures](/conditions/environment) |
-| `.setOpenSky(bool)` | Require open/covered sky | [Height, Sky & Structures](/conditions/environment) |
-| `.structures(id)` | Require a structure nearby | [Height, Sky & Structures](/conditions/environment) |
+| `.setOpenSky(bool)` | Require open or covered sky | [Height, Sky & Structures](/conditions/environment) |
+| `.structures(structures)` | Require a structure nearby | [Height, Sky & Structures](/conditions/environment) |
+
+### Height Conditions
+
+| Method | Description | Page |
+|---|---|---|
+| `.maxHeight(max)` | Altar must be at or below Y level | [Height, Sky & Structures](/conditions/environment) |
+| `.minHeight(min)` | Altar must be at or above Y level | [Height, Sky & Structures](/conditions/environment) |
+| `.height(exact)` | Altar must be at an exact Y level | [Height, Sky & Structures](/conditions/environment) |
+| `.height(min, max)` | Altar must be between two Y levels | [Height, Sky & Structures](/conditions/environment) |
+
+### Time Conditions
+
+| Method | Description | Page |
+|---|---|---|
+| `.time(timeType)` | Require `"day"` or `"night"` | [Time & Weather](/conditions/time-weather) |
+| `.minTime(ticks)` | Minimum time of day (in ticks, mod 24000) | [Time & Weather](/conditions/time-weather) |
+| `.maxTime(ticks)` | Maximum time of day (in ticks, mod 24000) | [Time & Weather](/conditions/time-weather) |
+| `.time(min, max)` | Time range in ticks (mod 24000) | [Time & Weather](/conditions/time-weather) |
+
+### Weather Conditions
+
+| Method | Description | Page |
+|---|---|---|
+| `.weather(callback)` | Require weather state via builder | [Time & Weather](/conditions/time-weather) |
 
 ## How Conditions Work
 
@@ -37,9 +62,23 @@ If any condition fails when the player inserts the catalyst:
 - The catalyst is **returned** to the player
 - There is **no** error message by default
 
-## Full Conditions Example
+::: warning DUPLICATE TYPES
+Only **one condition of each type** is allowed. If you add two of the same type (e.g. two time checks), the builder will throw an error. Use the combined forms instead (e.g. `.height(min, max)` instead of `.minHeight()` + `.maxHeight()`).
+:::
 
-This example uses every available condition:
+## Not Yet Implemented
+
+The source code contains a TODO note indicating these conditions are **planned but not yet available**:
+
+- **Light level** — restrict by light at the altar
+- **Block below** — require a specific block under the altar (existed in 1.19/1.20 as `.blockBelow()`)
+- **Water** — restrict based on water presence
+
+::: info
+If you need `blockBelow` functionality from 1.19/1.20, you can work around it using the [summoningrituals.start event](/events) to check the block below the altar manually and cancel the ritual if it doesn't match.
+:::
+
+## Full Conditions Example
 
 ```js
 .conditions(conditions =>
@@ -53,16 +92,3 @@ This example uses every available condition:
         .weather(w => w.setThundering(true))
 )
 ```
-
-This ritual requires **all** of the following to be true:
-1. Altar is in a plains or desert biome
-2. Altar is in the overworld
-3. Altar is at Y=30 or below
-4. Altar has open sky above
-5. Altar is inside a mineshaft structure
-6. It is nighttime
-7. It is thundering
-
-::: tip DESIGN TIP
-You don't need to use every condition. Most rituals only need one or two. Use conditions to create themed rituals — a "dark ritual" might need nighttime, while an "ocean ritual" might need a specific biome.
-:::

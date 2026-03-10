@@ -74,11 +74,6 @@ Individual `.itemOutput()` and `.mobOutput()` calls have been replaced with `.it
 | `SummoningOutput.mob("blaze")` | `SummoningEntity.output("blaze")` |
 | `.count(5)` | Second parameter: `SummoningEntity.output("blaze", 5)` |
 | N/A | `SummoningEntity.input("cat")` |
-
-Item output helpers also changed:
-
-| Before | After |
-|---|---|
 | N/A | `SummoningItem.of("3x diamond")` |
 
 ## Sacrifices
@@ -98,7 +93,19 @@ The `.sacrifice()` method and `.sacrificeRegion()` have been replaced.
 .sacrificeZone([3, 3, 3])
 ```
 
-Note that `.sacrificeZone()` now takes a **3D array** `[x, y, z]` instead of two values.
+Note that `.sacrificeZone()` now takes a **3D array** `[x, y, z]` instead of two values. It also has aliases: `.entityInputZone()`, `.inputZone()`, `.entityZone()`.
+
+## Recipe Time
+
+**Before:**
+```js
+.recipeTime(200)
+```
+
+**After:**
+```js
+.ticks(200)
+```
 
 ## Conditions
 
@@ -113,32 +120,63 @@ Conditions like `.blockBelow()`, `.weather()`, and `.dayTime()` have been consol
 
 **After:**
 ```js
-.conditions(conditions =>
-    conditions
-        .time("day")
-        .weather(w => w.setThundering(false))
-        .dimension("minecraft:overworld")
-        .biomes(["minecraft:plains"])
-        .maxHeight(256)
-        .setOpenSky(true)
-        .structures("#minecraft:village")
+.conditions(c =>
+    c.time("day")
+     .weather(w => w.setRaining(false))
 )
 ```
 
-::: info
-The `.blockBelow()` condition may not have a direct equivalent in 1.21.1. Check the [Conditions Overview](/conditions/overview) for all available conditions.
+::: warning BLOCK BELOW REMOVED
+`.blockBelow()` does **not** exist in 1.21.1. It is listed as a TODO in the source code. As a workaround, use the [summoningrituals.start event](/events) to check the block below manually and cancel the ritual.
 :::
 
-## Recipe Time
+### Weather Changes
 
-The `.recipeTime()` method may have changed or been removed in 1.21.1. The ritual duration is now handled differently.
+The old weather method took simple strings (`'clear'`, `'rain'`, `'thunder'`). The new builder uses `setRaining()` and `setThundering()`:
+
+| Before | After |
+|---|---|
+| `.weather('clear')` | `.weather(w => w.setRaining(false))` |
+| `.weather('rain')` | `.weather(w => w.setRaining(true).setThundering(false))` |
+| `.weather('thunder')` | `.weather(w => w.setThundering(true))` |
+
+### New Conditions in 1.21.1
+
+These are **new** and didn't exist in 1.19/1.20:
+
+| Condition | Description |
+|---|---|
+| `.biomes([...])` | Restrict by biome |
+| `.dimension(id)` | Restrict by dimension |
+| `.minHeight(y)` | Minimum Y level |
+| `.height(exact)` | Exact Y level |
+| `.height(min, max)` | Y level range |
+| `.setOpenSky(bool)` | Require open/covered sky |
+| `.structures(id)` | Require a structure |
+| `.minTime(ticks)` | Minimum time of day in ticks |
+| `.maxTime(ticks)` | Maximum time of day in ticks |
+| `.time(min, max)` | Time range in ticks |
 
 ## Commands
 
-A new `.commands()` method has been added for running server commands on ritual completion:
+A new `.commands()` method has been added with multiple overloads:
 
 ```js
-.commands(["say Ritual complete!", "/give @p diamond 1"])
+// Basic
+.commands(["say Ritual complete!"])
+
+// With JEI tooltip
+.commands(
+    ["give @p diamond 5"],
+    [Text.of("Grants diamonds").gold()]
+)
+
+// Requires player (won't fire from automation)
+.commands(
+    ["advancement grant @p only my_pack:ritual"],
+    [Text.of("Grants advancement").green()],
+    true
+)
 ```
 
 ## Events
@@ -168,6 +206,8 @@ ServerEvents.generic("summoningrituals.complete", event => { ... })
 | Sacrifices | `.sacrifice(mob, count)` | `.entityInputs([...])` |
 | Sacrifice area | `.sacrificeRegion(x, z)` | `.sacrificeZone([x, y, z])` |
 | Entity helper | `SummoningOutput.mob()` | `SummoningEntity.output()` |
+| Recipe time | `.recipeTime(ticks)` | `.ticks(ticks)` |
 | Conditions | Individual methods | `.conditions(builder)` |
+| Block below | `.blockBelow(block, state)` | ❌ Not yet implemented |
 | Commands | N/A | `.commands([...])` |
 | Tags | `#forge:` | `#c:` |

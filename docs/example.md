@@ -56,6 +56,7 @@ ServerEvents.recipes(event => {
         ])
         .commands(["say Hi", "/say Hello"])
         .sacrificeZone([3, 3, 3])
+        .ticks(200)
         .conditions(conditions =>
             conditions
                 .biomes(["minecraft:plains", "minecraft:desert"])
@@ -81,40 +82,27 @@ A **stick** placed on the altar starts this ritual.
 
 ### Entity Inputs (Sacrifice Zone)
 All of these entities must be present in the 6×6×6 sacrifice zone:
-- 3 elder guardians
-- 1 phantom
-- 1 silverfish
-- 3 cows
-- 1 wither
+- 3 elder guardians, 1 phantom, 1 silverfish, 3 cows, 1 wither
 - 1 cat (shown with "Meow" tooltip in JEI)
 
 ### Item Outputs
-- 1 apple (at altar)
-- 1 carrot (at altar)
-- 3 diamonds (at altar)
+- 1 apple, 1 carrot, 3 diamonds (at altar center)
 - Emeralds offset by (1, 2, 2) with random spread in a 4×2×4 area
 
 ### Entity Outputs
-- 1 bat (at altar)
-- 1 ender dragon (at altar)
-- 4 creepers (at altar)
-- 2 foxes (at altar)
-- 2 blazes with 50 max health, offset by (1, 2, 2), aqua "50 health" tooltip
-- 3 zombies holding enchanted diamond swords (Sharpness I), "Has Sword lol" tooltip
-- 1 ghast with 50 max health, offset (1, 2, 2), spread (4, 2, 4)
+- 1 bat, 1 ender dragon, 4 creepers, 2 foxes (at altar center)
+- 2 blazes: 50 max health, offset (1, 2, 2), aqua "50 health" tooltip
+- 3 zombies: holding enchanted diamond swords, "Has Sword lol" tooltip
+- 1 ghast: 50 max health, offset (1, 2, 2), spread (4, 2, 4)
 
 ### Commands
 Sends "Hi" and "Hello" in server chat.
 
+### Duration
+200 ticks (10 seconds).
+
 ### Conditions
-**All** of the following must be true simultaneously:
-1. Altar is in a **plains** or **desert** biome
-2. Altar is in the **overworld**
-3. Altar is at **Y ≤ 30**
-4. Altar has **open sky** above
-5. Altar is inside a **mineshaft** structure
-6. It is **nighttime**
-7. There is a **thunderstorm**
+**All** must be true: plains/desert biome, overworld, Y ≤ 30, open sky, inside mineshaft, nighttime, thunderstorm.
 
 ## Simpler Examples
 
@@ -126,10 +114,11 @@ ServerEvents.recipes(event => {
         .altar("iron_ingot")
         .itemInputs(["8x coal"])
         .itemOutputs(["diamond"])
+        .ticks(100)
 })
 ```
 
-### Mob Summoning
+### Mob Summoning with Tick-Based Time
 
 ```js
 ServerEvents.recipes(event => {
@@ -137,10 +126,15 @@ ServerEvents.recipes(event => {
         .altar("bone")
         .itemInputs(["rotten_flesh", "spider_eye", "gunpowder"])
         .entityOutputs(["minecraft:skeleton", "minecraft:zombie", "minecraft:creeper"])
+        .ticks(300)
+        .conditions(c =>
+            c.time(12000, 13000)  // only during sunset
+             .weather(w => w.setRaining(true))
+        )
 })
 ```
 
-### Conditional Ritual with Commands
+### Commands with Tooltip and Player Requirement
 
 ```js
 ServerEvents.recipes(event => {
@@ -148,12 +142,33 @@ ServerEvents.recipes(event => {
         .altar("nether_star")
         .itemInputs(["4x obsidian", "4x crying_obsidian"])
         .entityInputs(["minecraft:wither"])
-        .commands(["advancement grant @p only my_pack:defeated_wither"])
+        .commands(
+            ["advancement grant @p only my_pack:defeated_wither"],
+            [Text.of("Grants an advancement").gold()],
+            true  // requires a player
+        )
         .itemOutputs(["elytra"])
         .sacrificeZone([5, 5, 5])
         .conditions(c =>
             c.dimension("minecraft:the_end")
              .setOpenSky(true)
+             .minHeight(64)
+        )
+})
+```
+
+### Height Range Example
+
+```js
+ServerEvents.recipes(event => {
+    event.recipes.summoningrituals
+        .altar("sculk_catalyst")
+        .itemInputs(["echo_shard", "amethyst_shard"])
+        .entityOutputs(["minecraft:warden"])
+        .conditions(c =>
+            c.height(-64, 0)        // deep underground only
+             .setOpenSky(false)      // must be covered
+             .weather(w => w.setRaining(false))  // clear skies above
         )
 })
 ```
