@@ -1,6 +1,6 @@
 import { defineConfig } from "vitepress";
 
-const BASE = "/kubejs/";
+const BASE = "/summoning-rituals/";
 
 export default defineConfig({
   title: "Summoning Rituals",
@@ -79,7 +79,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: "https://github.com/Nostalgic-am/kubejs/edit/main/docs/:path",
+      pattern: "https://github.com/Nostalgic-am/summoning-rituals/edit/main/docs/:path",
       text: "Edit this page",
     },
 
@@ -88,7 +88,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/Nostalgic-am/kubejs" },
+      { icon: "github", link: "https://github.com/Nostalgic-am/summoning-rituals" },
     ],
 
     footer: {
