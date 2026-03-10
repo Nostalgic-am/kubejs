@@ -75,7 +75,7 @@ ServerEvents.recipes(event => {
 ### Catalyst
 A **stick** placed on the altar starts this ritual.
 
-### Item Inputs (Pedestals)
+### Item Inputs
 - 1 cobblestone
 - 1 item from the `#c:glass_blocks` tag
 - 3 items from the `#c:ingots` tag
