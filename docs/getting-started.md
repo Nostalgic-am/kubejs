@@ -39,18 +39,18 @@ ServerEvents.recipes(event => {
 ```
 
 This creates a ritual where:
-1. Place items on the **pedestals** around the altar (stone and cobblestone)
+1. Place items on the altar (stone and cobblestone)
 2. Right-click the altar with an **iron ingot** (the catalyst) to start the ritual
 3. When complete, a **diamond** spawns
 
 ::: tip
-The **catalyst** is the item placed on the altar to start the ritual. **Inputs** are items/entities placed on pedestals or in the sacrifice zone before starting.
+The **catalyst** is the item placed on the altar to start the ritual. **Inputs** are items/entities placed on the altar or in the sacrifice zone before starting.
 :::
 
 ## How Rituals Work
 
 1. Place an **Altar** block in the world
-2. Place items on the **pedestals** surrounding the altar (these are the item inputs)
+2. Place items on the altar (these are the item inputs)
 3. If the recipe requires entity inputs, make sure the required mobs are in the **sacrifice zone**
 4. Right-click the altar with the **catalyst** item
 5. If all **conditions** are met (biome, time, weather, etc.), the ritual begins
