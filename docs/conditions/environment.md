@@ -1,59 +1,35 @@
-# Height, Sky & Structures
+# Height, Light, Sky & Structures
 
 ## Height Conditions
 
-The conditions builder provides four ways to restrict the altar's Y position.
+Four ways to restrict the altar's Y position.
 
 ### `.maxHeight(max)` — At or Below
-
-Altar must be at or below the given Y level:
 
 ```js
 .conditions(c => c.maxHeight(30))    // Y ≤ 30
 .conditions(c => c.maxHeight(63))    // at or below sea level
-.conditions(c => c.maxHeight(0))     // deep underground
 ```
 
 ### `.minHeight(min)` — At or Above
 
-Altar must be at or above the given Y level:
-
 ```js
-.conditions(c => c.minHeight(100))   // Y ≥ 100 (mountain level)
-.conditions(c => c.minHeight(200))   // Y ≥ 200 (high altitude)
+.conditions(c => c.minHeight(100))   // Y ≥ 100
 .conditions(c => c.minHeight(64))    // above sea level
 ```
 
 ### `.height(exact)` — Exact Y Level
 
-Altar must be at an exact Y level:
-
 ```js
 .conditions(c => c.height(0))       // exactly Y = 0
-.conditions(c => c.height(64))      // exactly sea level
 ```
 
 ### `.height(min, max)` — Y Range
 
-Altar must be between two Y levels (inclusive):
-
 ```js
-.conditions(c => c.height(-64, 0))   // deep underground range
-.conditions(c => c.height(60, 70))   // around sea level
-.conditions(c => c.height(100, 256)) // high altitude range
+.conditions(c => c.height(-64, 0))   // deep underground
+.conditions(c => c.height(100, 256)) // high altitude
 ```
-
-::: warning ONE HEIGHT CONDITION
-Only **one** height condition is allowed per recipe. Using `.minHeight()` and `.maxHeight()` together will throw a duplicate condition error. Use `.height(min, max)` instead:
-
-```js
-// WRONG — will throw an error
-.conditions(c => c.minHeight(10).maxHeight(50))
-
-// CORRECT — use the range form
-.conditions(c => c.height(10, 50))
-```
-:::
 
 ### Height Quick Reference
 
@@ -63,37 +39,55 @@ Only **one** height condition is allowed per recipe. Using `.minHeight()` and `.
 | Above ground only | `.minHeight(64)` |
 | Exact level | `.height(0)` |
 | Range | `.height(-64, 0)` |
-| Mountain tops | `.minHeight(200)` |
-| Below sea level | `.maxHeight(63)` |
 
-## `.setOpenSky()`
+## Light Level Conditions
 
-Requires the altar to have (or not have) a clear line of sight to the sky.
+::: tip NEW IN v3.3.0
+Light level conditions were added in Summoning Rituals v3.3.0.
+:::
 
-```js
-.conditions(c => c.setOpenSky(true))   // must be outdoors
-.conditions(c => c.setOpenSky(false))  // must be covered/underground
-```
+Restrict the ritual based on the composite light level at the altar (0–15). This combines block light and sky light.
 
-| Value | Description |
-|---|---|
-| `true` | Altar must have open sky above (no blocks overhead) |
-| `false` | Altar must be covered (blocks above it) |
-
-### Example: Outdoor Summoning
+### `.minLightLevel(min)` — At Least
 
 ```js
-event.recipes.summoningrituals
-    .altar("sunflower")
-    .itemInputs(["gold_ingot", "glowstone_dust"])
-    .entityOutputs(["minecraft:allay"])
-    .conditions(c =>
-        c.setOpenSky(true)
-         .time("day")
-    )
+.conditions(c => c.minLightLevel(10))   // bright area (light ≥ 10)
+.conditions(c => c.minLightLevel(15))   // maximum brightness only
 ```
 
-### Example: Cave Ritual
+### `.maxLightLevel(max)` — At Most
+
+```js
+.conditions(c => c.maxLightLevel(7))    // dark area (light ≤ 7, mobs can spawn)
+.conditions(c => c.maxLightLevel(0))    // pitch black only
+```
+
+### `.lightLevel(exact)` — Exact Level
+
+```js
+.conditions(c => c.lightLevel(0))      // complete darkness
+.conditions(c => c.lightLevel(15))     // full brightness
+```
+
+### `.lightLevel(min, max)` — Range
+
+```js
+.conditions(c => c.lightLevel(0, 7))    // dark enough for mob spawns
+.conditions(c => c.lightLevel(8, 15))   // well-lit area
+.conditions(c => c.lightLevel(4, 8))    // dim/twilight range
+```
+
+### Light Level Quick Reference
+
+| Scenario | Method | Notes |
+|---|---|---|
+| Pitch black | `.maxLightLevel(0)` | Only in sealed rooms |
+| Dark (mob spawnable) | `.maxLightLevel(7)` | Caves, unlit areas |
+| Well-lit | `.minLightLevel(8)` | Torches, glowstone nearby |
+| Full brightness | `.lightLevel(15)` | Direct sunlight or glowstone |
+| Dim | `.lightLevel(4, 8)` | Partial light |
+
+### Example: Dark Ritual
 
 ```js
 event.recipes.summoningrituals
@@ -101,12 +95,53 @@ event.recipes.summoningrituals
     .itemInputs(["echo_shard", "amethyst_shard"])
     .entityOutputs(["minecraft:warden"])
     .conditions(c =>
-        c.setOpenSky(false)
+        c.maxLightLevel(4)
          .maxHeight(0)
+         .setOpenSky(false)
     )
 ```
 
-## `.structures()`
+## `.setOpenSky()` — Sky Visibility
+
+Require or forbid a clear view of the sky above the altar.
+
+```js
+.conditions(c => c.setOpenSky(true))   // must be outdoors
+.conditions(c => c.setOpenSky(false))  // must be covered/underground
+```
+
+## `.setSmoked()` — Campfire Smoke
+
+::: tip NEW IN v3.3.0
+The smoked condition was added in Summoning Rituals v3.3.0.
+:::
+
+Requires the altar to be (or not be) in a smoky area. Smoke comes from campfires.
+
+```js
+.conditions(c => c.setSmoked(true))    // must have campfire smoke
+.conditions(c => c.setSmoked(false))   // must not be smoky
+```
+
+### Example: Smoke Ritual
+
+```js
+// Ritual that requires campfire smoke (mystical atmosphere)
+event.recipes.summoningrituals
+    .altar("blaze_powder")
+    .itemInputs(["coal", "bone_meal", "gunpowder"])
+    .entityOutputs(["minecraft:blaze"])
+    .conditions(c =>
+        c.setSmoked(true)
+         .time("night")
+    )
+```
+
+::: info
+Smoke is detected from campfires. Place a campfire near the altar to create smoke. A soul campfire also counts.
+:::
+
+## `.structures()` — Structure Requirement
 
 Restricts the ritual to within the bounds of a specific structure.
 
@@ -114,11 +149,7 @@ Restricts the ritual to within the bounds of a specific structure.
 .conditions(c => c.structures("#minecraft:mineshaft"))
 ```
 
-The altar must be inside the **bounding box** of the matching structure.
-
 ### Structure Tags
-
-Use `#` for structure tags:
 
 ```js
 .conditions(c => c.structures("#minecraft:village"))
@@ -130,7 +161,6 @@ Use `#` for structure tags:
 ```js
 .conditions(c => c.structures("minecraft:stronghold"))
 .conditions(c => c.structures("minecraft:monument"))
-.conditions(c => c.structures("minecraft:fortress"))
 ```
 
 ### Common Structure Tags (1.21.1)
@@ -143,18 +173,15 @@ Use `#` for structure tags:
 | `#minecraft:shipwreck` | All shipwrecks |
 | `#minecraft:ruined_portal` | All ruined portals |
 
-::: tip EXPLORATION REWARD
-Structure conditions reward exploration. Require players to find a specific structure before they can perform a powerful ritual.
-:::
-
-## Combining All Three
+## Combining Conditions
 
 ```js
-// Underground mineshaft ritual at night
+// Underground, dark, smoky cave ritual
 .conditions(c =>
     c.height(-64, 30)
+     .maxLightLevel(4)
      .setOpenSky(false)
+     .setSmoked(true)
      .structures("#minecraft:mineshaft")
-     .time("night")
 )
 ```

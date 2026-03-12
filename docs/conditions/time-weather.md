@@ -25,56 +25,35 @@ For finer control, use the tick-based methods. Minecraft day/night runs on a 24,
 | 18000 | Midnight (00:00) |
 | 23000 | Pre-dawn (05:00) |
 
-All tick values are **modulo 24,000** — so they wrap around automatically.
+All tick values are **modulo 24,000** — they wrap around automatically.
 
 ### `.minTime(ticks)` — Earliest Allowed Time
 
-Ritual only works **after** a specific tick:
-
 ```js
-// Only after noon
-.conditions(c => c.minTime(6000))
-
-// Only after sunset
-.conditions(c => c.minTime(12000))
+.conditions(c => c.minTime(6000))    // only after noon
+.conditions(c => c.minTime(12000))   // only after sunset
 ```
 
 ### `.maxTime(ticks)` — Latest Allowed Time
 
-Ritual only works **before** a specific tick:
-
 ```js
-// Only before noon
-.conditions(c => c.maxTime(6000))
-
-// Only in the morning (before 9 AM)
-.conditions(c => c.maxTime(3000))
+.conditions(c => c.maxTime(6000))    // only before noon
+.conditions(c => c.maxTime(3000))    // only in the morning
 ```
 
 ### `.time(min, max)` — Time Range
 
-Ritual works only within a tick range:
-
 ```js
-// Only during sunset (roughly 18:00–19:00)
-.conditions(c => c.time(12000, 13000))
-
-// Only during midnight hour
-.conditions(c => c.time(17500, 18500))
-
-// Only during early morning (06:00–09:00)
-.conditions(c => c.time(0, 3000))
+.conditions(c => c.time(12000, 13000))  // sunset only
+.conditions(c => c.time(17500, 18500))  // midnight hour
+.conditions(c => c.time(0, 3000))       // early morning
 ```
-
-::: warning ONE TIME CONDITION
-You can only have **one** time condition per recipe. Using both `.time("night")` and `.minTime(12000)` will throw a duplicate condition error. Use the tick-based `.time(min, max)` form if you need a custom range.
-:::
 
 ## Weather Conditions
 
 ### `.weather(callback)`
 
-Restricts the ritual based on weather using a callback with a weather builder:
+Restricts the ritual based on weather using a callback:
 
 ```js
 .conditions(c =>
@@ -89,7 +68,7 @@ Restricts the ritual based on weather using a callback with a weather builder:
 | `w.setRaining(bool)` | Require rain (`true`) or clear skies (`false`) |
 | `w.setThundering(bool)` | Require thunder (`true`) or no thunder (`false`) |
 
-Both methods can be combined in a single weather builder:
+Both can be combined:
 
 ```js
 // Raining but NOT thundering
@@ -102,11 +81,15 @@ Both methods can be combined in a single weather builder:
     c.weather(w => w.setRaining(true).setThundering(true))
 )
 
-// Clear skies (no rain, no thunder)
+// Clear skies
 .conditions(c =>
     c.weather(w => w.setRaining(false).setThundering(false))
 )
 ```
+
+::: warning INVALID COMBINATIONS
+You **cannot** set thundering to `true` and raining to `false` — it can't thunder without rain. The builder will throw an error. You must also set at least one of `setRaining` or `setThundering`.
+:::
 
 ### Weather Quick Reference
 
@@ -115,26 +98,24 @@ Both methods can be combined in a single weather builder:
 | Clear | `w => w.setRaining(false)` |
 | Rain only | `w => w.setRaining(true).setThundering(false)` |
 | Thunderstorm | `w => w.setThundering(true)` |
-| Any rain (with or without thunder) | `w => w.setRaining(true)` |
+| Any rain | `w => w.setRaining(true)` |
 
 ## Combining Time and Weather
 
-Create atmospheric rituals by combining both:
-
 ```js
-// Dark ritual: thunderstorm at night
+// Thunderstorm at night
 .conditions(c =>
     c.time("night")
      .weather(w => w.setThundering(true))
 )
 
-// Precise timing: during sunset in the rain
+// Sunset in the rain
 .conditions(c =>
     c.time(12000, 13000)
      .weather(w => w.setRaining(true))
 )
 
-// Clear morning ritual
+// Clear morning
 .conditions(c =>
     c.time(0, 6000)
      .weather(w => w.setRaining(false))

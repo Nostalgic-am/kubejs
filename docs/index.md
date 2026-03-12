@@ -22,7 +22,7 @@ features:
   - title: 🐾 Entity Support
     details: Summon and sacrifice entities with custom NBT data, tooltips, spawn offsets, and spread control using SummoningEntity helpers.
   - title: ⚡ Events
-    details: Hook into ritual start and completion events to add custom logic like XP costs, lightning effects, or achievement triggers.
+    details: Hook into ritual start and completion events to add custom logic like XP costs, visual effects, or achievement triggers.
   - title: 🌦️ Conditions
-    details: Restrict rituals by biome, dimension, time of day, weather, height, structures, and open sky using the conditions builder.
+    details: Restrict rituals by biome, dimension, time, weather, height, light level, block below, facing, structures, and more.
 ---

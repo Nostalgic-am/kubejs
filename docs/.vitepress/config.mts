@@ -60,8 +60,12 @@ export default defineConfig({
           { text: "Biome & Dimension", link: "/conditions/biome-dimension" },
           { text: "Time & Weather", link: "/conditions/time-weather" },
           {
-            text: "Height, Sky & Structures",
+            text: "Height, Light, Sky & Structures",
             link: "/conditions/environment",
+          },
+          {
+            text: "Block & Altar State",
+            link: "/conditions/block-altar",
           },
         ],
       },
@@ -79,7 +83,8 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: "https://github.com/Nostalgic-am/summoning-rituals/edit/main/docs/:path",
+      pattern:
+        "https://github.com/Nostalgic-am/summoning-rituals/edit/main/docs/:path",
       text: "Edit this page",
     },
 
@@ -88,7 +93,10 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/Nostalgic-am/summoning-rituals" },
+      {
+        icon: "github",
+        link: "https://github.com/Nostalgic-am/summoning-rituals",
+      },
     ],
 
     footer: {

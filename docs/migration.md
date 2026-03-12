@@ -26,7 +26,7 @@ ServerEvents.recipes(event => {
 
 ## Inputs
 
-Individual `.input()` calls have been replaced with a single `.itemInputs()` that takes an array.
+Individual `.input()` calls have been replaced with a single `.itemInputs()` array.
 
 **Before:**
 ```js
@@ -41,33 +41,27 @@ Individual `.input()` calls have been replaced with a single `.itemInputs()` tha
 ```
 
 ::: warning
-Tag namespaces have changed from `#forge:` to `#c:` on NeoForge 1.21.1 (Common tags convention).
+Tag namespaces changed from `#forge:` to `#c:` on NeoForge 1.21.1.
 :::
 
 ## Outputs
 
-Individual `.itemOutput()` and `.mobOutput()` calls have been replaced with `.itemOutputs()` and `.entityOutputs()` arrays.
+Individual output calls have been replaced with arrays.
 
 **Before:**
 ```js
 .itemOutput('3x gold_ingot')
 .itemOutput('diamond')
 .mobOutput('wolf')
-.mobOutput(SummoningOutput.mob('blaze').count(5).offset(0, 3, 0))
 ```
 
 **After:**
 ```js
 .itemOutputs(["3x gold_ingot", "diamond"])
-.entityOutputs([
-    "wolf",
-    SummoningEntity.output("blaze", 5).offset([0, 3, 0])
-])
+.entityOutputs(["wolf"])
 ```
 
 ## Entity Helpers
-
-`SummoningOutput.mob()` has been renamed to `SummoningEntity.output()`, and a new `SummoningEntity.input()` exists for sacrifice inputs.
 
 | Before (1.19/1.20) | After (1.21.1) |
 |---|---|
@@ -77,8 +71,6 @@ Individual `.itemOutput()` and `.mobOutput()` calls have been replaced with `.it
 | N/A | `SummoningItem.of("3x diamond")` |
 
 ## Sacrifices
-
-The `.sacrifice()` method and `.sacrificeRegion()` have been replaced.
 
 **Before:**
 ```js
@@ -93,23 +85,15 @@ The `.sacrifice()` method and `.sacrificeRegion()` have been replaced.
 .sacrificeZone([3, 3, 3])
 ```
 
-Note that `.sacrificeZone()` now takes a **3D array** `[x, y, z]` instead of two values. It also has aliases: `.entityInputZone()`, `.inputZone()`, `.entityZone()`.
+`.sacrificeZone()` takes a 3D array `[x, y, z]`. Aliases: `.entityInputZone()`, `.inputZone()`, `.entityZone()`.
 
 ## Recipe Time
 
-**Before:**
-```js
-.recipeTime(200)
-```
-
-**After:**
-```js
-.ticks(200)
-```
+**Before:** `.recipeTime(200)` → **After:** `.ticks(200)`
 
 ## Conditions
 
-Conditions like `.blockBelow()`, `.weather()`, and `.dayTime()` have been consolidated into a `.conditions()` builder.
+Conditions have been consolidated into a `.conditions()` builder.
 
 **Before:**
 ```js
@@ -121,18 +105,17 @@ Conditions like `.blockBelow()`, `.weather()`, and `.dayTime()` have been consol
 **After:**
 ```js
 .conditions(c =>
-    c.time("day")
+    c.blockBelow("minecraft:furnace", { lit: "true" })
      .weather(w => w.setRaining(false))
+     .time("day")
 )
 ```
 
-::: warning BLOCK BELOW REMOVED
-`.blockBelow()` does **not** exist in 1.21.1. It is listed as a TODO in the source code. As a workaround, use the [summoningrituals.start event](/events) to check the block below manually and cancel the ritual.
+::: tip BLOCK BELOW IS BACK
+`.blockBelow()` was missing in early 1.21.1 builds but was **re-added in v3.3.0**. It now lives inside the `.conditions()` builder and block state values must be **strings** (e.g. `{ lit: "true" }` not `{ lit: true }`).
 :::
 
 ### Weather Changes
-
-The old weather method took simple strings (`'clear'`, `'rain'`, `'thunder'`). The new builder uses `setRaining()` and `setThundering()`:
 
 | Before | After |
 |---|---|
@@ -142,46 +125,31 @@ The old weather method took simple strings (`'clear'`, `'rain'`, `'thunder'`). T
 
 ### New Conditions in 1.21.1
 
-These are **new** and didn't exist in 1.19/1.20:
-
-| Condition | Description |
-|---|---|
-| `.biomes([...])` | Restrict by biome |
-| `.dimension(id)` | Restrict by dimension |
-| `.minHeight(y)` | Minimum Y level |
-| `.height(exact)` | Exact Y level |
-| `.height(min, max)` | Y level range |
-| `.setOpenSky(bool)` | Require open/covered sky |
-| `.structures(id)` | Require a structure |
-| `.minTime(ticks)` | Minimum time of day in ticks |
-| `.maxTime(ticks)` | Maximum time of day in ticks |
-| `.time(min, max)` | Time range in ticks |
+| Condition | Version | Description |
+|---|---|---|
+| `.biomes([...])` | 3.0+ | Restrict by biome |
+| `.dimension(id)` | 3.0+ | Restrict by dimension |
+| `.minHeight(y)` / `.height(min, max)` | 3.0+ | Height restrictions |
+| `.setOpenSky(bool)` | 3.0+ | Sky visibility |
+| `.structures(id)` | 3.0+ | Structure requirement |
+| `.minTime(ticks)` / `.time(min, max)` | 3.0+ | Tick-based time |
+| `.blockBelow(block, state?)` | **3.3.0** | Block under altar |
+| `.minLightLevel(min)` / `.lightLevel(min, max)` | **3.3.0** | Light level |
+| `.setSmoked(bool)` | **3.3.0** | Campfire smoke |
+| `.facing(direction)` | **3.3.0** | Altar facing direction |
+| `.setWaterlogged(bool)` | **3.3.0** | Waterlogged altar |
 
 ## Commands
 
-A new `.commands()` method has been added with multiple overloads:
-
 ```js
-// Basic
 .commands(["say Ritual complete!"])
-
-// With JEI tooltip
-.commands(
-    ["give @p diamond 5"],
-    [Text.of("Grants diamonds").gold()]
-)
-
-// Requires player (won't fire from automation)
-.commands(
-    ["advancement grant @p only my_pack:ritual"],
-    [Text.of("Grants advancement").green()],
-    true
-)
+.commands(["give @p diamond 5"], [Text.of("Grants diamonds").gold()])
+.commands(["advancement grant @p only my_pack:ritual"], [Text.of("Advancement").green()], true)
 ```
 
 ## Events
 
-Events now use a dedicated `SummoningRituals` handler:
+Events now use `SummoningRituals` (not `ServerEvents`):
 
 **Before:**
 ```js
@@ -194,6 +162,16 @@ onEvent('summoningrituals.complete', event => { ... })
 SummoningRituals.start(event => { ... })
 SummoningRituals.complete(event => { ... })
 ```
+
+### Event Property Changes
+
+| Before | After |
+|---|---|
+| `event.recipe` | `event.recipeInfo` (a `RecipeInfoContainer`) |
+| N/A | `event.recipeInfo.id` (recipe ID) |
+| N/A | `event.recipeInfo.entities` (actual entities used) |
+
+The `event.level.spawnLightning()` method from old examples **no longer exists**.
 
 ## Quick Reference
 
@@ -209,7 +187,7 @@ SummoningRituals.complete(event => { ... })
 | Entity helper | `SummoningOutput.mob()` | `SummoningEntity.output()` |
 | Recipe time | `.recipeTime(ticks)` | `.ticks(ticks)` |
 | Conditions | Individual methods | `.conditions(builder)` |
-| Block below | `.blockBelow(block, state)` | ❌ Not yet implemented |
+| Block below | `.blockBelow(block, state)` | `.conditions(c => c.blockBelow(...))` |
 | Commands | N/A | `.commands([...])` |
 | Tags | `#forge:` | `#c:` |
 | Event recipe prop | `event.recipe` | `event.recipeInfo` |

@@ -10,33 +10,30 @@ The main recipe builder class. Defines `.commands()` (with 3 overloads) and `.co
 [View on GitHub →](https://github.com/AlmostReliable/summoningrituals/blob/1.21.1/src/main/java/com/almostreliable/summoningrituals/compat/kubejs/recipe/AltarKubeRecipe.java)
 
 ### AltarRecipeSchema.java
-Defines the recipe schema — all recipe keys including `INITIATOR` (catalyst), `ITEM_OUTPUTS`, `ENTITY_OUTPUTS`, `COMMANDS`, `ITEM_INPUTS`, `ENTITY_INPUTS`, `ZONE` (sacrifice zone with 4 aliases), `TICKS`, and `CONDITIONS`.
+Defines the recipe schema — all recipe keys including `INITIATOR`, `ITEM_OUTPUTS`, `ENTITY_OUTPUTS`, `COMMANDS`, `ITEM_INPUTS`, `ENTITY_INPUTS`, `ZONE`, `TICKS`, and `CONDITIONS`.
 
 [View on GitHub →](https://github.com/AlmostReliable/summoningrituals/blob/1.21.1/src/main/java/com/almostreliable/summoningrituals/compat/kubejs/recipe/AltarRecipeSchema.java)
 
 ### ConditionsBuilder.java
-The conditions builder that powers `.conditions()`. Exposes: `.biomes()`, `.dimension()`, `.minHeight()`, `.maxHeight()`, `.height()` (exact and range), `.setOpenSky()`, `.structures()`, `.minTime()`, `.maxTime()`, `.time()` (named and tick range), and `.weather()`.
+The conditions builder. In **v3.3.0** this includes: `.biomes()`, `.dimension()`, height conditions, light level conditions, `.setOpenSky()`, `.setSmoked()`, `.structures()`, `.blockBelow()`, `.facing()`, `.setWaterlogged()`, time conditions, and `.weather()`.
 
 [View on GitHub →](https://github.com/AlmostReliable/summoningrituals/blob/1.21.1/src/main/java/com/almostreliable/summoningrituals/compat/kubejs/builder/ConditionsBuilder.java)
 
-## Not Yet Implemented
+### SummoningKubeEvent.java
+The event class for `SummoningRituals.start` and `SummoningRituals.complete`. Exposes `level`, `pos`, `recipeInfo`, and `player`.
 
-The `ConditionsBuilder.java` contains this TODO:
+[View on GitHub →](https://github.com/AlmostReliable/summoningrituals/blob/1.21.1/src/main/java/com/almostreliable/summoningrituals/compat/kubejs/SummoningKubeEvent.java)
 
-```
-// TODO: implement more from the LocationPredicate (light, block below, water)
-```
+### RecipeInfoContainer.java
+Container class holding recipe ID, recipe reference, and actual entities used in the ritual.
 
-These conditions are planned but not available yet:
-- **Light level** at the altar
-- **Block below** the altar (was `.blockBelow()` in 1.19/1.20)
-- **Water** presence check
+[View on GitHub →](https://github.com/AlmostReliable/summoningrituals/blob/1.21.1/src/main/java/com/almostreliable/summoningrituals/recipe/RecipeInfoContainer.java)
 
 ## Repository
 
 - **Repository:** [AlmostReliable/summoningrituals](https://github.com/AlmostReliable/summoningrituals)
 - **Branch:** `1.21.1`
-- **KubeJS package:** `com.almostreliable.summoningrituals.compat.kubejs`
+- **Latest version:** v3.3.0
 
 ## Community Resources
 
